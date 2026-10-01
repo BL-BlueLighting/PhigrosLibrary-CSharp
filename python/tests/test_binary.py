@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from phigros_library._binary import VARSHORT_MAX, ByteReader, ByteWriter
-from phigros_library.crypto import decrypt, decrypt_entry, encrypt, encrypt_entry
-from phigros_library.exceptions import PhigrosDataError, PhigrosFormatError
+from PhigrosScoreLibrary._binary import VARSHORT_MAX, ByteReader, ByteWriter
+from PhigrosScoreLibrary.crypto import decrypt, decrypt_entry, encrypt, encrypt_entry
+from PhigrosScoreLibrary.exceptions import PhigrosDataError, PhigrosFormatError
 
 
 @pytest.mark.parametrize("value", [0, 1, 127, 128, 200, 300, 2047, VARSHORT_MAX])

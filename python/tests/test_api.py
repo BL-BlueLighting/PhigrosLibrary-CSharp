@@ -10,8 +10,8 @@ from stubs import StubOpener, StubResponse, header_of, json_response
 
 import pytest
 
-from phigros_library import APP_ID, APP_KEY, LeanCloudClient, Summary, write_summary
-from phigros_library.exceptions import PhigrosApiError
+from PhigrosScoreLibrary import APP_ID, APP_KEY, LeanCloudClient, Summary, write_summary
+from PhigrosScoreLibrary.exceptions import PhigrosApiError
 
 SESSION_TOKEN = "fake-session-token"
 

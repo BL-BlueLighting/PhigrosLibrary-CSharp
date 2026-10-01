@@ -1,4 +1,4 @@
-"""按 :class:`~phigros_library.schemas.ObjectSchema` 描述的结构，在字节流与字段表之间转换。
+"""按 :class:`~PhigrosScoreLibrary.schemas.ObjectSchema` 描述的结构，在字节流与字段表之间转换。
 
 字段表是 schema 与强类型模型之间的中间表示：存档结构带有版本号，解析时会把多个版本的
 schema 依次作用在同一张字段表上，缺少的字段由模型侧取默认值；序列化时再按同样的顺序写回。

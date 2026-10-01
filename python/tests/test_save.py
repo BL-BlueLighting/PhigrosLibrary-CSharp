@@ -8,7 +8,7 @@ import zipfile
 
 import pytest
 
-from phigros_library import (
+from PhigrosScoreLibrary import (
     ENTRY_GAME_KEY,
     ENTRY_GAME_PROGRESS,
     GameProgress,
@@ -21,8 +21,8 @@ from phigros_library import (
     write_save,
     write_save_file,
 )
-from phigros_library.crypto import decrypt_entry, encrypt_entry
-from phigros_library.exceptions import PhigrosFormatError
+from PhigrosScoreLibrary.crypto import decrypt_entry, encrypt_entry
+from PhigrosScoreLibrary.exceptions import PhigrosFormatError
 
 
 def test_sample_save_round_trips_byte_exactly(difficulties) -> None:

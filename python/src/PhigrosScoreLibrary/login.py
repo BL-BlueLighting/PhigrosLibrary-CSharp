@@ -9,7 +9,7 @@
 
 最省事的用法是 :meth:`PhigrosLogin.login`，它把四步串起来，只把二维码回调出来::
 
-    from phigros_library import PhigrosLogin
+    from PhigrosScoreLibrary import PhigrosLogin
 
     with PhigrosLogin() as login:
         result = login.login(lambda qr: print("请扫码：", qr.url))

@@ -14,7 +14,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 from stubs import StubOpener, StubResponse, body_text, header_of, json_response
 
-from phigros_library import (
+from PhigrosScoreLibrary import (
     LeanCloudApp,
     PhigrosLogin,
     PhigrosLoginError,

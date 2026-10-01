@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from phigros_library import (
+from PhigrosScoreLibrary import (
     BEST_COUNT,
     RECORD_COUNT,
     LevelRecord,
@@ -15,7 +15,7 @@ from phigros_library import (
     compute_rks,
     create_sample_save,
 )
-from phigros_library.exceptions import PhigrosDataError
+from PhigrosScoreLibrary.exceptions import PhigrosDataError
 
 
 def make_records(*entries: tuple[str, SongDifficulty, float, bool]) -> dict[str, SongLevels]:

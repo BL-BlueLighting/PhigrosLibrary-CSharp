@@ -3,7 +3,7 @@
 [PhigrosLibrary](../README.md) 的 Python 实现：Phigros 云存档的解析与序列化、
 B19 / RKS / 期望 ACC 计算、TapTap 扫码登录，以及基于 LeanCloud 的查分接口。
 
-* 发行名 `phigros-score-library`，导入名 **`phigros_library`**。
+* 发行名 `phigros-score-library`，导入名 **`PhigrosScoreLibrary`**。
 * 除 AES 依赖 [`cryptography`](https://pypi.org/project/cryptography/) 外，其余功能全部基于标准库。
 * 支持 Python 3.10 及以上。
 
@@ -26,7 +26,7 @@ pip install .          # 或 pip install -e ".[dev]" 装开发依赖
 没有 sessionToken 时先扫码登录，用 TapTap App 扫一次即可，拿到的令牌可以长期复用：
 
 ```python
-from phigros_library import PhigrosLogin
+from PhigrosScoreLibrary import PhigrosLogin
 
 with PhigrosLogin() as login:                       # 国际服传 TapTapRegion.GLOBAL
     result = login.login(lambda qr: print("请扫码：", qr.url))
@@ -36,7 +36,7 @@ with PhigrosLogin() as login:                       # 国际服传 TapTapRegion.
 ### 第二步：查分
 
 ```python
-from phigros_library import DifficultyTable, PhigrosClient
+from PhigrosScoreLibrary import DifficultyTable, PhigrosClient
 
 client = PhigrosClient("<sessionToken>", DifficultyTable.bundled())
 
@@ -54,7 +54,7 @@ for entry in result.best:
 异步环境（例如 Yunzai / NoneBot 插件）可以直接用异步门面：
 
 ```python
-from phigros_library import AsyncPhigrosClient, DifficultyTable, PhigrosClient
+from PhigrosScoreLibrary import AsyncPhigrosClient, DifficultyTable, PhigrosClient
 
 client = AsyncPhigrosClient(PhigrosClient("<sessionToken>", DifficultyTable.bundled()))
 result = await client.get_best19()
@@ -65,7 +65,7 @@ result = await client.get_best19()
 `DifficultyTable.bundled()` 读取随包分发的定数表，省去自己找文件：
 
 ```python
-from phigros_library import DifficultyTable, RksCalculator, parse_save_file
+from PhigrosScoreLibrary import DifficultyTable, RksCalculator, parse_save_file
 
 save = parse_save_file("cloud.save")
 print(len(save.game_record), "首曲目")
@@ -81,7 +81,7 @@ print(calculator.compute_progress(save.game_record))   # 12 项统计
 
 ```python
 import io, zipfile
-from phigros_library import parse_save, write_save
+from PhigrosScoreLibrary import parse_save, write_save
 
 original = open("cloud.save", "rb").read()
 rewritten = write_save(parse_save(original))
@@ -138,7 +138,7 @@ save.settings         # Settings
 每个 `SongLevels` 有四个槽位（EZ / HD / IN / AT），`None` 表示该难度没有成绩：
 
 ```python
-from phigros_library import SongDifficulty
+from PhigrosScoreLibrary import SongDifficulty
 
 record = save.game_record["Credits.Frums"][SongDifficulty.AT]
 record.score, record.accuracy, record.full_combo, record.is_all_perfect
@@ -157,7 +157,7 @@ record.score, record.accuracy, record.full_combo, record.is_all_perfect
 * 请勿大规模查分。需要高频调用时设置限流：
 
   ```python
-  from phigros_library import LeanCloudClient, PhigrosClient
+  from PhigrosScoreLibrary import LeanCloudClient, PhigrosClient
 
   api = LeanCloudClient(minimum_request_interval=0.5)  # 每次请求至少间隔 0.5 秒
   client = PhigrosClient("<sessionToken>", difficulties, api=api)
@@ -173,5 +173,5 @@ twine upload --repository testpypi dist/*   # 先发到 TestPyPI 试装
 twine upload dist/*                         # 确认无误后发正式版
 ```
 
-`src/phigros_library/data/difficulty.tsv` 是仓库根目录 `resources/difficulty.tsv` 的副本，
+`src/PhigrosScoreLibrary/data/difficulty.tsv` 是仓库根目录 `resources/difficulty.tsv` 的副本，
 发布前请确认两者一致（`pytest tests/test_difficulty.py` 里有专门的用例把关）。

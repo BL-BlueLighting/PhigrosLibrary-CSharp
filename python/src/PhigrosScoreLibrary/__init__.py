@@ -13,7 +13,7 @@
 
 快速上手::
 
-    from phigros_library import DifficultyTable, PhigrosClient, PhigrosLogin
+    from PhigrosScoreLibrary import DifficultyTable, PhigrosClient, PhigrosLogin
 
     # 没有 sessionToken 时先扫码登录
     with PhigrosLogin() as login:

@@ -29,7 +29,7 @@ class PhigrosClient:
     ) -> None:
         """
         :param session_token: 玩家 sessionToken，可通过
-            :class:`~phigros_library.login.PhigrosLogin` 扫码获取。
+            :class:`~PhigrosScoreLibrary.login.PhigrosLogin` 扫码获取。
         :param difficulties: 定数表，计算 B19 / 期望 ACC 时必需。
         :param api: 自定义的接口客户端；给出时 ``app`` 会被忽略。
         :param app: 区服对应的应用配置；为 ``None`` 时使用国服。

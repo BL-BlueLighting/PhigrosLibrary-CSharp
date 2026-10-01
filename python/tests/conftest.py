@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from phigros_library import DifficultyTable
+from PhigrosScoreLibrary import DifficultyTable
 
 #: 仓库根目录（含 resources 的那一层）。
 REPO_ROOT = Path(__file__).resolve().parents[2]

@@ -21,9 +21,9 @@ TapTap 扫码登录、基于 LeanCloud 的查分接口。
 │   ├── examples/PhigrosCli/     命令行示例
 │   └── tests/PhigrosLibrary.Tests/   78 个单元测试
 ├── python/                    Python 实现（≥3.10，仅依赖 cryptography）
-│   ├── src/phigros_library/     包
+│   ├── src/PhigrosScoreLibrary/     包
 │   ├── examples/cli.py          命令行示例
-│   └── tests/                   86 个单元测试
+│   └── tests/                   128 个单元测试
 ├── resources/                 数据表（定数表、曲目信息等，见 NOTICE.md）
 └── LICENSE                    GPL-3.0
 ```
@@ -63,14 +63,14 @@ dotnet run --project csharp/examples/PhigrosCli -- query  --token <sessionToken>
 
 ### Python
 
-发行名 `phigros-score-library`，导入名 `phigros_library`：
+发行名 `phigros-score-library`，导入名 `PhigrosScoreLibrary`：
 
 ```bash
 pip install phigros-score-library
 ```
 
 ```python
-from phigros_library import DifficultyTable, PhigrosClient, PhigrosLogin
+from PhigrosScoreLibrary import DifficultyTable, PhigrosClient, PhigrosLogin
 
 # 没有 sessionToken 时先扫码登录
 with PhigrosLogin() as login:

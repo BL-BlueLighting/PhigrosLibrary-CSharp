@@ -36,7 +36,7 @@ Issues = "https://github.com/BL-BlueLighting/PhigrosLibrary-CSharp/issues"
 Documentation = "https://github.com/7aGiven/PhigrosLibrary"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/phigros_library"]
+packages = ["src/PhigrosScoreLibrary"]
 
 [tool.hatch.build.targets.sdist]
 include = [

@@ -44,7 +44,7 @@ class DifficultyTable:
     def bundled(cls) -> DifficultyTable:
         """加载随包分发的定数表，省去自己去找 ``difficulty.tsv``::
 
-            from phigros_library import DifficultyTable, RksCalculator
+            from PhigrosScoreLibrary import DifficultyTable, RksCalculator
 
             calculator = RksCalculator(DifficultyTable.bundled())
         """

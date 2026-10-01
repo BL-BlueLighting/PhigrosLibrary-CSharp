@@ -21,7 +21,7 @@ from pathlib import Path
 # 允许直接从源码树运行，无需先安装本包。
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from phigros_library import (  # noqa: E402
+from PhigrosScoreLibrary import (  # noqa: E402
     AsyncPhigrosClient,
     DifficultyTable,
     PhigrosClient,

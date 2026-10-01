@@ -6,9 +6,9 @@ import base64
 
 import pytest
 
-from phigros_library import Summary, parse_summary, write_summary
-from phigros_library._binary import ByteWriter
-from phigros_library.exceptions import PhigrosFormatError
+from PhigrosScoreLibrary import Summary, parse_summary, write_summary
+from PhigrosScoreLibrary._binary import ByteWriter
+from PhigrosScoreLibrary.exceptions import PhigrosFormatError
 
 
 def test_parses_known_layout() -> None:

@@ -6,12 +6,12 @@ from pathlib import Path
 
 import pytest
 
-from phigros_library import DifficultyTable, SongDifficulty, bundled_difficulty_text
-from phigros_library.exceptions import PhigrosDataError
+from PhigrosScoreLibrary import DifficultyTable, SongDifficulty, bundled_difficulty_text
+from PhigrosScoreLibrary.exceptions import PhigrosDataError
 
 #: 随包分发的副本在源码树中的位置。
 BUNDLED_DIFFICULTY = (
-    Path(__file__).resolve().parents[1] / "src" / "phigros_library" / "data" / "difficulty.tsv"
+    Path(__file__).resolve().parents[1] / "src" / "PhigrosScoreLibrary" / "data" / "difficulty.tsv"
 )
 
 
