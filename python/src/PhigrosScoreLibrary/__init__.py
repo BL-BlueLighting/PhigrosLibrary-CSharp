@@ -90,7 +90,8 @@ from .save import (
 )
 from .testing import create_sample_save
 
-__version__ = "1.0.0"
+#: 版本号。这里是唯一来源，pyproject.toml 通过 hatchling 动态读取它。
+__version__ = "1.0.1"
 
 __all__ = [
     # 存档读写
