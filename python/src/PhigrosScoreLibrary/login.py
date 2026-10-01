@@ -25,6 +25,7 @@ import asyncio
 import base64
 import hashlib
 import hmac
+import inspect
 import json
 import os
 import time
@@ -571,10 +572,24 @@ class AsyncPhigrosLogin:
     async def complete(self, token: TapTapToken) -> LoginResult:
         return await asyncio.to_thread(self._login.complete, token)
 
-    async def login(self, on_qr_code_ready: Callable[[QrCodeData], None]) -> LoginResult:
-        """一次走完全流程，二维码地址通过 ``on_qr_code_ready`` 交给调用方展示。"""
+    async def login(self, on_qr_code_ready: Callable[[QrCodeData], Any]) -> LoginResult:
+        """一次走完全流程，二维码地址通过 ``on_qr_code_ready`` 交给调用方展示。
+
+        回调在事件循环线程里执行，普通函数与 ``async def`` 都可以：
+
+        .. code-block:: python
+
+            async def on_qr(qr):
+                await send_qr_image_to_chat(qr.url)     # 回调里可以直接 await
+
+            result = await login.login(on_qr)
+        """
         data = await self.request_qr_code()
-        on_qr_code_ready(data)
+
+        # 允许传 async 回调：调用后若拿到可等待对象，一并 await 掉。
+        pending = on_qr_code_ready(data)
+        if inspect.isawaitable(pending):
+            await pending
 
         token = await self.wait_for_token(data)
         return await self.complete(token)

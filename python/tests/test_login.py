@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import hashlib
 import hmac
 import io
 import json
+import threading
 import urllib.error
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -15,6 +17,7 @@ import pytest
 from stubs import StubOpener, StubResponse, body_text, header_of, json_response
 
 from PhigrosScoreLibrary import (
+    AsyncPhigrosLogin,
     LeanCloudApp,
     PhigrosLogin,
     PhigrosLoginError,
@@ -524,6 +527,113 @@ def test_login_result_creates_client_with_region() -> None:
 
 
 # ---------- 整体流程 ----------
+
+
+def _whole_flow_opener() -> StubOpener:
+    def responder(request: urllib.request.Request) -> StubResponse:
+        url = request.full_url
+        if url.endswith("/oauth2/v1/device/code"):
+            return json_response(QR_RESPONSE)
+        if url.endswith("/oauth2/v1/token"):
+            return json_response(TOKEN_RESPONSE)
+        if "/account/profile/v1" in url:
+            return json_response(PROFILE_RESPONSE)
+        if url.endswith("/1.1/users"):
+            return json_response({"objectId": "user-1", "sessionToken": "session-token-1"})
+        return json_response({}, status=404)
+
+    return StubOpener(responder)
+
+
+def test_async_login_runs_the_whole_flow() -> None:
+    opener = _whole_flow_opener()
+    login_client = PhigrosLogin(TapTapRegion.CHINA, clock=Clock(FIXED_NOW), opener=opener)
+    async_client = AsyncPhigrosLogin(login_client)
+
+    shown: list[QrCodeData] = []
+    result = asyncio.run(async_client.login(shown.append))
+
+    assert result.session_token == "session-token-1"
+    assert result.nickname == "鸽子"
+    assert shown[0].url == "https://accounts.tapapis.cn/qr/device-123"
+    assert len(opener.requests) == 4
+
+
+def test_async_login_awaits_async_callback() -> None:
+    # 回归测试：回调曾被同步调用，传 async def 会得到 "coroutine was never awaited"。
+    opener = _whole_flow_opener()
+    login_client = PhigrosLogin(TapTapRegion.CHINA, clock=Clock(FIXED_NOW), opener=opener)
+    async_client = AsyncPhigrosLogin(login_client)
+
+    seen: list[str] = []
+
+    async def on_qr(qr: QrCodeData) -> None:
+        await asyncio.sleep(0)  # 断言回调里确实可以 await
+        seen.append(qr.url)
+
+    result = asyncio.run(async_client.login(on_qr))
+
+    assert seen == ["https://accounts.tapapis.cn/qr/device-123"]
+    assert result.session_token == "session-token-1"
+
+
+def test_async_login_accepts_sync_and_async_callbacks_alike() -> None:
+    seen: list[str] = []
+
+    def run(callback) -> str:
+        seen.clear()
+        login_client = PhigrosLogin(TapTapRegion.CHINA, clock=Clock(FIXED_NOW), opener=_whole_flow_opener())
+        return asyncio.run(AsyncPhigrosLogin(login_client).login(callback)).session_token
+
+    def sync_callback(qr: QrCodeData) -> None:
+        seen.append(f"sync:{qr.url}")
+
+    async def async_callback(qr: QrCodeData) -> None:
+        seen.append(f"async:{qr.url}")
+
+    assert run(sync_callback) == "session-token-1"
+    assert seen == ["sync:https://accounts.tapapis.cn/qr/device-123"]
+
+    assert run(async_callback) == "session-token-1"
+    assert seen == ["async:https://accounts.tapapis.cn/qr/device-123"]
+
+
+def test_async_login_calls_back_on_the_event_loop_thread() -> None:
+    opener = _whole_flow_opener()
+    login_client = PhigrosLogin(TapTapRegion.CHINA, clock=Clock(FIXED_NOW), opener=opener)
+    async_client = AsyncPhigrosLogin(login_client)
+
+    async def scenario() -> list[str]:
+        current = asyncio.get_running_loop()
+        threads: list[str] = []
+        # 二维码回调必须发生在事件循环线程里，否则在回调里 await 会炸。
+        result = await async_client.login(lambda qr: threads.append(threading.current_thread().name))
+        threads.append(threading.current_thread().name)
+        return threads
+
+    main_thread, callback_thread = asyncio.run(scenario())
+
+    assert callback_thread == main_thread
+
+
+def test_async_login_supports_step_by_step() -> None:
+    opener = _whole_flow_opener()
+    login_client = PhigrosLogin(TapTapRegion.CHINA, clock=Clock(FIXED_NOW), opener=opener)
+    async_client = AsyncPhigrosLogin(login_client)
+
+    async def scenario() -> str:
+        data = await async_client.request_qr_code()
+        token = await async_client.wait_for_token(data)
+        result = await async_client.complete(token)
+        return result.session_token
+
+    assert asyncio.run(scenario()) == "session-token-1"
+
+
+def test_async_login_exposes_blocking_client() -> None:
+    login_client = PhigrosLogin(TapTapRegion.CHINA, opener=_whole_flow_opener())
+
+    assert AsyncPhigrosLogin(login_client).login_client is login_client
 
 
 def test_login_runs_the_whole_flow() -> None:

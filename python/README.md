@@ -33,6 +33,38 @@ with PhigrosLogin() as login:                       # 国际服传 TapTapRegion.
     print(result.session_token)                     # 保存下来，下次直接用
 ```
 
+异步环境下用 `AsyncPhigrosLogin`。二维码回调是在**事件循环线程**里触发的，
+所以可以直接在回调里 `await`（比如把二维码图片发到群里）：
+
+```python
+import asyncio
+from PhigrosScoreLibrary import AsyncPhigrosLogin, PhigrosLogin
+
+async def main() -> None:
+    login = AsyncPhigrosLogin(PhigrosLogin())       # 国际服传 TapTapRegion.GLOBAL
+
+    async def on_qr(qr):
+        await send_qr_image_to_chat(qr.url)         # 回调里可以安全地 await
+        print(f"有效期 {qr.expires_in_seconds} 秒")
+
+    result = await login.login(on_qr)
+    print(result.session_token)
+
+asyncio.run(main())
+```
+
+需要先发二维码、稍后再回来等结果时，可以分步调用：
+
+```python
+data = await login.request_qr_code()                # 拿二维码地址
+token = await login.wait_for_token(data)            # 阻塞式轮询，已挪到线程池
+result = await login.complete(token)                # 取资料并换 sessionToken
+```
+
+`AsyncPhigrosLogin` 内部用 `asyncio.to_thread` 把阻塞的网络请求挪到线程池，
+因此不依赖任何异步 HTTP 库；手上已有 `PhigrosLogin` 实例时，
+用 `AsyncPhigrosLogin(login)` 包一层即可。
+
 ### 第二步：查分
 
 ```python
@@ -57,6 +89,9 @@ for entry in result.best:
 from PhigrosScoreLibrary import AsyncPhigrosClient, DifficultyTable, PhigrosClient
 
 client = AsyncPhigrosClient(PhigrosClient("<sessionToken>", DifficultyTable.bundled()))
+
+print(await client.get_nickname())
+summary = await client.get_summary()
 result = await client.get_best19()
 ```
 
@@ -162,16 +197,3 @@ record.score, record.accuracy, record.full_combo, record.is_all_perfect
   api = LeanCloudClient(minimum_request_interval=0.5)  # 每次请求至少间隔 0.5 秒
   client = PhigrosClient("<sessionToken>", difficulties, api=api)
   ```
-
-## 发布到 PyPI（维护者用）
-
-```bash
-pip install build twine
-python -m build                 # 生成 dist/*.whl 与 dist/*.tar.gz
-twine check dist/*              # 检查元数据与 README 渲染
-twine upload --repository testpypi dist/*   # 先发到 TestPyPI 试装
-twine upload dist/*                         # 确认无误后发正式版
-```
-
-`src/PhigrosScoreLibrary/data/difficulty.tsv` 是仓库根目录 `resources/difficulty.tsv` 的副本，
-发布前请确认两者一致（`pytest tests/test_difficulty.py` 里有专门的用例把关）。
