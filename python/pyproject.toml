@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "phigros-score-library"
+version = "1.0.0"
+description = "Phigros 云存档解析库：存档解密与序列化、B19 / RKS / 期望 ACC 计算、TapTap 扫码登录、LeanCloud 查分接口。"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "BL.BlueLighting" }]
+keywords = ["phigros", "cloud-save", "game-save", "decryption", "rhythm-game"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Games/Entertainment",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = ["cryptography>=41"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "build>=1.0", "twine>=5"]
+
+[project.urls]
+Homepage = "https://github.com/BL-BlueLighting/PhigrosLibrary-CSharp"
+Repository = "https://github.com/BL-BlueLighting/PhigrosLibrary-CSharp"
+Issues = "https://github.com/BL-BlueLighting/PhigrosLibrary-CSharp/issues"
+Documentation = "https://github.com/7aGiven/PhigrosLibrary"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/phigros_library"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/examples",
+    "/conftest.py",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

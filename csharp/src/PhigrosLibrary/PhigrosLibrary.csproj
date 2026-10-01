@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>PhigrosLibrary</RootNamespace>
+    <AssemblyName>PhigrosLibrary</AssemblyName>
+    <PackageId>PhigrosLibrary</PackageId>
+    <Description>Phigros 云存档解析库的 C# 实现：存档解密 / 序列化、B19 与期望 ACC 计算、LeanCloud 查分接口。</Description>
+    <Version>1.0.0</Version>
+    <Authors>PhigrosLibrary-C# contributors</Authors>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+  </PropertyGroup>
+
+</Project>
